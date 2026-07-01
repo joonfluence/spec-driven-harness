@@ -11,15 +11,21 @@ PRD 작성부터 코드베이스 리서치, 구현 계획, 기술 리뷰, QA 테
    PRD             코드베이스 리서치      Plan             Plan 리뷰        테스트 케이스
 ```
 
-| 단계 | 커맨드 | 패턴 | 사용 에이전트 | 산출물 |
+| 단계 | 커맨드 | 패턴 | 사용 에이전트 (model) | 산출물 |
 |------|--------|------|---------------|--------|
-| 1 | `/create-prd` | Producer-Reviewer | `prd-reviewer` | `PRD.md` |
-| 2 | `/create-research` | Fan-out/Fan-in (최대 3병렬) | `codebase-researcher` | `research.md` |
-| 3 | `/create-plan` | Fan-out(컨텍스트) + Producer-Reviewer 합의 루프 | `plan-architect`, `plan-critic` | `PLAN.md` |
-| 4 | `/review-plan` | Fan-out/Fan-in (3관점 병렬 리뷰) | 인라인 서브에이전트 3개 | 리뷰 리포트 |
-| 5 | `/create-tc` | Fan-out(기능그룹) + Fan-in(통합/커버리지검증) | `qa-tc-generator` | `TC_전체.csv` 등 |
+| 1 | `/create-prd` | Producer-Reviewer | 컨텍스트 수집 haiku · `prd-reviewer` sonnet | `PRD.md` |
+| 2 | `/create-research` | Fan-out/Fan-in (최대 3병렬) | 컨텍스트 수집 haiku · `codebase-researcher` sonnet | `research.md` |
+| 3 | `/create-plan` | Fan-out(컨텍스트) + Producer-Reviewer 합의 루프 | 컨텍스트 수집 haiku · Producer(본인) **opus 권장** · `plan-architect`/`plan-critic` sonnet | `PLAN.md` |
+| 4 | `/review-plan` | Fan-out/Fan-in (3관점 병렬 리뷰) | 인라인 서브에이전트 3개, sonnet | 리뷰 리포트 |
+| 5 | `/create-tc` | Fan-out(기능그룹) + Fan-in(통합/커버리지검증) | `qa-tc-generator` sonnet | `TC_전체.csv` 등 |
 
 각 단계는 이전 단계 산출물을 입력으로 받습니다 (`PRD.md` → `research.md` → `PLAN.md` → 리뷰 → TC). 독립적으로 실행할 수도 있습니다.
+
+### 모델 라우팅 원칙
+
+- **opus**: 설계 대안을 비교하고 트레이드오프를 판단하는 Plan 초안 작성(Producer)에만 사용. 이 단계는 서브에이전트 호출이 아니라 커맨드를 실행하는 세션 자체이므로, `/create-plan`을 opus 세션에서 실행하는 것을 권장.
+- **sonnet**: 이미 만들어진 산출물을 검증·평가하는 모든 리뷰(`prd-reviewer`, `plan-architect`, `plan-critic`, `review-plan`의 3개 서브에이전트)와, 구조화된 산출물을 생성하는 리서치/TC 생성(`codebase-researcher`, `qa-tc-generator`)에 사용. 검증·생성은 꼼꼼함과 규칙 준수가 핵심이라 opus 수준의 창의적 판단이 필요하지 않음.
+- **haiku**: 각 커맨드 Phase 1의 단순 컨텍스트 수집(파일 탐색, 환경/레퍼런스 요약)에 사용. 판단이 아니라 조회이므로 가장 가벼운 모델로 충분.
 
 ## 왜 이렇게 나눴는가
 

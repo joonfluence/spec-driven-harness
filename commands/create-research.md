@@ -21,7 +21,7 @@ $ARGUMENTS 로 PRD 파일 경로를 받는다. 입력이 없으면 현재 디렉
 
 **2개 Agent를 동시에 실행**한다. 반드시 하나의 메시지에서 병렬 발행한다.
 
-### Agent A: 환경 및 제약 로드 (Explore agent)
+### Agent A: 환경 및 제약 로드 (Explore agent, model=haiku)
 
 ```
 프로젝트 환경과 레포 제약을 분석하라:
@@ -30,7 +30,7 @@ $ARGUMENTS 로 PRD 파일 경로를 받는다. 입력이 없으면 현재 디렉
 3. 출력: REPO_LIST (이름, 타입, 역할), SCOPE 제약
 ```
 
-### Agent B: PRD 파싱 및 요구사항 추출 (Explore agent)
+### Agent B: PRD 파싱 및 요구사항 추출 (Explore agent, model=haiku)
 
 ```
 PRD 파일을 전체 읽고 다음을 추출하라:
@@ -59,7 +59,7 @@ Research가 없으면 다음 Phase로 진행한다 (Research는 자체가 Resear
 
 ## Phase 2: Fan-out — 병렬 요구사항 리서치
 
-Phase 0+1 결과를 종합한 후, **codebase-researcher agent** (subagent_type="codebase-researcher", model=opus)를 요구사항 그룹별로 병렬 실행한다.
+Phase 0+1 결과를 종합한 후, **codebase-researcher agent** (subagent_type="codebase-researcher", model=sonnet)를 요구사항 그룹별로 병렬 실행한다.
 
 ### 그룹핑 규칙
 
@@ -118,7 +118,7 @@ Step 3: 갭 분석
 
 ## Phase 2.5: Fan-out — 병렬 심층 분석
 
-Phase 2 결과에서 **Implemented 또는 Partial 상태인 요구사항**에 대해서만 심층 분석 Agent를 병렬 실행한다 (subagent_type="codebase-researcher", model=opus).
+Phase 2 결과에서 **Implemented 또는 Partial 상태인 요구사항**에 대해서만 심층 분석 Agent를 병렬 실행한다 (subagent_type="codebase-researcher", model=sonnet).
 
 ### 심층 분석 Agent 프롬프트
 
